@@ -50,9 +50,4 @@ def logout(request):
     return redirect('/') # / (home)으로 리다이렉트
 
 def home(request):
-    user_id=request.session.get('user')
-
-    if user_id:
-        bcuser=Bcuser.objects.get(pk=user_id)
-        return HttpResponse(bcuser.username)
-    return HttpResponse('Home!')
+    return render(request, 'home.html')
