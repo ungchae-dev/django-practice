@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from django.urls import path
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
 from .models import Bcuser
+from .forms import LoginForm
 
 # Create your views here.
 def register(request):
@@ -27,7 +28,31 @@ def register(request):
                 username=username, 
                 useremail=useremail, 
                 password=make_password(password) # make_password: 비밀번호 암호화 처리
-                )
+            )
             bcuser.save() # 저장
 
         return render(request, 'register.html', res_data)
+    
+def login(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            request.session["user"] = form.user_id
+            return redirect("/")
+    else:
+        form = LoginForm()
+
+    return render(request, "login.html", {"form": form})
+    
+def logout(request):
+    if request.session.get('user'):
+        del(request.session['user']) # 해당 user 세션에서 삭제
+    return redirect('/') # / (home)으로 리다이렉트
+
+def home(request):
+    user_id=request.session.get('user')
+
+    if user_id:
+        bcuser=Bcuser.objects.get(pk=user_id)
+        return HttpResponse(bcuser.username)
+    return HttpResponse('Home!')
