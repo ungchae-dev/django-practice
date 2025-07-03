@@ -19,7 +19,8 @@ from django.urls import path, include
 from bcuser.views import home
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('bcuser/', include('bcuser.urls')), 
+    path('admin/', admin.site.urls), 
+    path('bcuser/', include('bcuser.urls')), # bcuser로 요청이 오면 bcuser.urls에서 처리
+    path('board/', include('board.urls')), 
     path('',home)
 ]
